@@ -55,9 +55,11 @@ const sampleOHLC = [
 function convertToOHLC(data: any) {
   // create an empty array to store the OHLC data
   let ohlcData = [];
-
+  if (!data?.length) {
+    return [];
+  }
   // loop through the input data array
-  for (let i = 0; i < data.length; i++) {
+  for (let i = 0; i < data?.length; i++) {
     // extract the timestamp, open, high, low, and close from the current data array
     let timestamp = data[i][0];
     let open = data[i][1];
@@ -65,7 +67,8 @@ function convertToOHLC(data: any) {
     let low = data[i][3];
     let close = data[i][4];
 
-    // create an OHLC object and push it to the ohlcData array
+    // create an OHLC  object and push it to the ohlcData array
+
     let ohlcObj = {
       time: new Date(timestamp),
       open: open,
@@ -73,30 +76,73 @@ function convertToOHLC(data: any) {
       low: low,
       close: close,
     };
-    console.log("ohlc Object ->", ohlcObj);
+    //console.log("ohlc Obj !>", ohlcObj);
     ohlcData.push(ohlcObj);
   }
 
-  console.log("ohlc Data ->", ohlcData);
   // return the ohlcData array
   return ohlcData;
 }
 
-const VictoryCandleStickChart = () => {
+const OHLCDates = (data: any) => {
+  let dates = [];
+  if (!data?.length) {
+    return [];
+  }
+  // loop through the input data array
+  for (let i = 0; i < data?.length; i++) {
+    // extract the timestamp, open, high, low, and close from the current data array
+    let timestamp = data[i][0];
+    let ohlcDates = new Date(timestamp);
+    //console.log("ohlc dates!>", ohlcDates);
+    dates.push(ohlcDates);
+  }
+
+  // return the ohlcData array
+  console.log("dates !>", dates);
+  return dates;
+};
+
+interface Props {
+  historyData: Array<Array<number>>;
+}
+
+const VictoryCandleStickChart = ({ historyData }: Props) => {
   return (
-    <VictoryChart
-      height={260}
-      width={600}
-      theme={VictoryTheme.material}
-      domainPadding={{ x: 25 }}
-      scale={{ x: "time" }}
-    >
-      <VictoryAxis tickFormat={(t) => `${format(t, "dd")}`} />
-      <VictoryAxis dependentAxis />
+    <VictoryChart height={200} width={400} domainPadding={{ x: 25 }}>
+      <VictoryAxis
+        fixLabelOverlap
+        scale={{ x: "time" }}
+        style={{
+          axis: { stroke: "#737373" },
+          tickLabels: {
+            fontSize: 10,
+            fill: "#525252",
+            padding: 10,
+          },
+        }}
+        tickFormat={(t) => `${format(t, "yyy")}`}
+      />
+      <VictoryAxis
+        style={{
+          axis: { stroke: "#737373" },
+          tickLabels: {
+            fill: "#525252",
+            fontSize: 10,
+          },
+        }}
+        dependentAxis
+      />
       <VictoryCandlestick
         candleRatio={0.5}
         candleColors={{ positive: "#34d399", negative: "#f87171" }}
-        data={convertToOHLC(sampleOHLC)}
+        data={convertToOHLC(historyData)}
+        style={{
+          data: { stroke: "#737373" },
+          labels: {
+            fill: "red",
+          },
+        }}
       />
     </VictoryChart>
   );

@@ -3,6 +3,7 @@ import tw from "@/utils/tw";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import VictoryCandleStickChart from "./VictoryCandleStickChart";
+import useGetCoinOHLC from "@/hooks/apis/useGetCoinOHLC";
 
 type ChartTimePeriod = "week" | "month" | "year";
 
@@ -61,36 +62,46 @@ const series = [
   },
 ];
 
-const CoinDetailsChart = () => {
-  const [chartHistory, setChartHistory] = useState<ChartTimePeriod>("month");
+interface Props {
+  id: string;
+}
 
-  const { data } = useGetCoinHistory("Qwsogvtv82FCd", "7d");
+const CoinDetailsChart = ({ id }: Props) => {
+  const [chartHistory, setChartHistory] = useState<ChartTimePeriod>("month");
+  const [ohlcTimePeriod, setOhlcTimePeriod] = useState(7);
+
+  const { data: ohlcData, status: ohlcDataStatus } = useGetCoinOHLC(
+    id,
+    ohlcTimePeriod
+  );
+
+  const [ohlcHistoryData, setOhlcHistoryData] = useState([[]]);
   const changeChartHistory = (hist: ChartTimePeriod) => () => {
     setChartHistory(hist);
   };
   const [windowLoaded, setWindowLoaded] = useState(false);
 
   useEffect(() => {
-    console.log("coin history ->", data);
-  }, [data]);
-  useEffect(() => {
-    setWindowLoaded(true);
-  }, []);
+    if (ohlcDataStatus === "success") {
+      console.log("coin ohlc ->", ohlcData);
+      setOhlcHistoryData(ohlcData?.data);
+    }
+  }, [ohlcData, ohlcDataStatus]);
 
   return (
     <div className="">
       <div className="flex flex-row items-center gap-5">
         <button
           className={tw(
-            chartHistory === "week" &&
+            ohlcTimePeriod === 7 &&
               "py-1 px-3 bg-neutral-700 shadow-lg shadow-neutral-400 rounded-lg active:scale-95"
           )}
-          onClick={changeChartHistory("week")}
+          onClick={() => setOhlcTimePeriod(7)}
         >
           <p
             className={tw(
               "text-sm",
-              chartHistory === "week" ? "text-white " : "text-black "
+              ohlcTimePeriod === 7 ? "text-white " : "text-black "
             )}
           >
             WEEK
@@ -98,15 +109,15 @@ const CoinDetailsChart = () => {
         </button>
         <button
           className={tw(
-            chartHistory === "month" &&
+            ohlcTimePeriod === 30 &&
               "py-1 px-3 bg-neutral-700 shadow-lg shadow-neutral-400 rounded-lg active:scale-95"
           )}
-          onClick={changeChartHistory("month")}
+          onClick={() => setOhlcTimePeriod(30)}
         >
           <p
             className={tw(
               "text-sm",
-              chartHistory === "month" ? "text-white " : "text-black "
+              ohlcTimePeriod === 30 ? "text-white " : "text-black "
             )}
           >
             MONTH
@@ -114,15 +125,15 @@ const CoinDetailsChart = () => {
         </button>
         <button
           className={tw(
-            chartHistory === "year" &&
+            ohlcTimePeriod === 365 &&
               "py-1 px-3 bg-neutral-700 shadow-lg shadow-neutral-400 rounded-lg active:scale-95"
           )}
-          onClick={changeChartHistory("year")}
+          onClick={() => setOhlcTimePeriod(365)}
         >
           <p
             className={tw(
               "text-sm",
-              chartHistory === "year" ? "text-white " : "text-black "
+              ohlcTimePeriod === 365 ? "text-white " : "text-black "
             )}
           >
             YEAR
@@ -131,7 +142,7 @@ const CoinDetailsChart = () => {
       </div>
 
       <div className="">
-        <VictoryCandleStickChart />
+        <VictoryCandleStickChart historyData={ohlcHistoryData} />
       </div>
     </div>
   );

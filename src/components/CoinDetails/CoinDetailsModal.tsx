@@ -10,8 +10,9 @@ import { changeHighLow } from "@/utils/changeHighLow";
 import MarketStatCard from "@/components/CoinDetails/MarketStatCard";
 import CoinDetailsChart from "./CoinDetailsChart";
 import useGetCoinDetail from "@/hooks/apis/useGetCoinDetail";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import CoinSentimentAnalysis from "./CoinSentimentAnalysis";
+import { GlobalContext } from "@/context/globalContext";
 
 const sampleCoinData = {
   uuid: "Qwsogvtv82FCd",
@@ -79,16 +80,23 @@ interface Props {
 }
 
 const CoinDetailsModal = ({ closeModal }: Props) => {
-  const { data, status } = useGetCoinDetail("bitcoin");
+  const { coinDetailIdState } = useContext(GlobalContext);
+  const [coinId, _] = coinDetailIdState!;
+  const { data: coinData, status: coinDataStatus } = useGetCoinDetail(coinId);
+
+  const [coinDetails, setCoinDetails] = useState<any>({});
 
   useEffect(() => {
-    console.log("data ->", data);
-  }, [status]);
+    if (coinDataStatus === "success") {
+      console.log("coin data->", coinData);
+      setCoinDetails(coinData?.data);
+    }
+  }, [coinDataStatus, coinData]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-10 ">
       {/** modal body*/}
-      <div className="fixed right-0 bg-white w-2/3 h-full px-8 py-6 flex flex-col gap-4">
+      <div className="fixed right-0 bg-white w-2/3 h-full px-8 py-6 flex flex-col gap-4 overflow-scroll">
         {/**header */}
         <div className="flex flex-row justify-between">
           <p className="text-xl font-medium">COIN DETAILS</p>
@@ -106,20 +114,22 @@ const CoinDetailsModal = ({ closeModal }: Props) => {
           <div className="flex flex-row items-center gap-3">
             <div className="flex items-center gap-2">
               <NextImage
-                src={sampleCoinData.iconUrl}
+                src={coinDetails?.image?.small}
                 className="w-7 h-7"
                 height={0}
                 width={0}
                 alt="coin_image"
               />
-              <p className="text-xl font-medium text-neutral-700">Bitcoin</p>{" "}
+              <p className="text-xl font-medium text-neutral-700">
+                {coinDetails?.name}
+              </p>{" "}
               <p className="text-base text-neutral-400 font-medium">
                 {" "}
-                (BTC/USD)
+                ({coinDetails?.symbol?.toUpperCase()}/USD)
               </p>
             </div>
             <Chip>
-              <p className="text-sm">RANK #5</p>
+              <p className="text-sm">RANK #{coinDetails?.market_cap_rank}</p>
             </Chip>
             <Chip>
               <p className="text-sm">USD</p>
@@ -127,7 +137,7 @@ const CoinDetailsModal = ({ closeModal }: Props) => {
             <Chip className="flex justify-center items-center py-1.5">
               <ShareIcon
                 onClick={() => {
-                  window.open(sampleCoinData.websiteUrl, "_blank");
+                  window.open(coinDetails?.links?.homepage?.[0], "_blank");
                 }}
               />
             </Chip>
@@ -135,14 +145,24 @@ const CoinDetailsModal = ({ closeModal }: Props) => {
 
           <div className="flex flex-row items-center gap-4">
             <p className="text-2xl font-medium">
-              {sampleCoinData.btcPrice} BTC
+              {coinDetails?.market_data?.current_price?.usd} USD
             </p>
-            {changeHighLow(sampleCoinData.change) === "high" ? (
-              <p className="text-green-500 ">{sampleCoinData.change}</p>
+            {changeHighLow(coinDetails?.market_data?.price_change_24h) ===
+            "high" ? (
+              <p className="text-green-500 ">
+                {parseFloat(coinDetails?.price_change_percentage_24h).toFixed(
+                  2
+                )}
+              </p>
             ) : (
-              <p className="text-red-500 ">{sampleCoinData.change}</p>
+              <p className="text-red-500 ">
+                {parseFloat(coinDetails?.market_data?.price_change_24h).toFixed(
+                  2
+                )}
+              </p>
             )}
-            {changeHighLow(sampleCoinData.change) === "high" ? (
+            {changeHighLow(coinDetails?.market_data?.price_change_24h) ===
+            "high" ? (
               <UpArrowIcon className="text-green-500 w-8 h-8" />
             ) : (
               <DownArrowIcon className="text-red-500 w-8 h-8" />
@@ -152,11 +172,11 @@ const CoinDetailsModal = ({ closeModal }: Props) => {
 
         {/** chart */}
 
-        <CoinDetailsChart />
+        <CoinDetailsChart id={coinId} />
 
         {/** chart */}
 
-        <CoinSentimentAnalysis />
+        <CoinSentimentAnalysis symbol={coinDetails?.symbol} />
 
         {/** market stats */}
         <div className="flex flex-col gap-3">
@@ -164,23 +184,24 @@ const CoinDetailsModal = ({ closeModal }: Props) => {
           <div className="grid grid-cols-2 gap-6">
             <MarketStatCard
               statHeader="MARKET CAP"
-              statValue="$348.0B"
-              statValue2="35% of crypto market"
+              statValue={coinDetails?.market_data?.market_cap?.usd}
+              statValue2=""
             />
             <MarketStatCard
-              statHeader="VOLUME (24H)"
-              statValue="$25.5B"
-              statValue2="35% of crypto market"
+              statHeader="Total Volume"
+              statValue={coinDetails?.market_data?.total_volume?.usd}
             />
             <MarketStatCard
               statHeader="CIRCULATING SUPPLY"
-              statValue="$348.0B"
-              statValue2="35% of crypto market"
+              statValue={coinDetails?.market_data?.circulating_supply}
             />
-            <MarketStatCard statHeader="ALL TIME HIGH" statValue="$68,789.63" />
+            <MarketStatCard
+              statHeader="ALL TIME HIGH"
+              statValue={coinDetails?.market_data?.ath["usd"]}
+            />
             <MarketStatCard
               statHeader="PRICE CHANGE (24H)"
-              statValue="$+12.5"
+              statValue={`$${coinDetails?.market_data?.price_change_24h}`}
             />
           </div>
         </div>

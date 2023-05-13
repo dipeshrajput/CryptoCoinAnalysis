@@ -99,7 +99,7 @@ export default function CoinCard({
 
     const normalizedValues = values.map((value) => (value - minValue) / range);
 
-    const factor = 100; // Adjust this value to scale the line up or down
+    const factor = 10; // Adjust this value to scale the line up or down
     const scaledValues = normalizedValues.map((value) => value * factor);
     console.log("scaleddValues ->", scaledValues);
     const chartData = scaledValues.map((value, index) => ({
@@ -115,7 +115,7 @@ export default function CoinCard({
   }, []);
 
   return (
-    <div className="max-w-md p-3 border rounded-xl shadow-lg shadow-zinc-200 flex flex-row items-center justify-between gap-3">
+    <div className="max-w-xs h-40 p-3 rounded-xl shadow-lg shadow-zinc-200 flex flex-row items-center justify-between gap-3">
       <div className="flex flex-col gap-3">
         <div className="flex flex-row items-center gap-2">
           <NextImage
@@ -125,12 +125,12 @@ export default function CoinCard({
             height={0}
             alt={`coin_image_${coinName}`}
           />
-          <p className="font-medium text-lg">{coinName}</p>
+          <p className="font-medium text-lg text-neutral-700">{coinName}</p>
         </div>
-        <p className="font-semibold">{coinPrice} $</p>
+        <p className="font-medium text-xl">{coinPrice} $</p>
         <div className="flex flex-row items-center gap-3">
-          <p className="text-sm">
-            All Time High: {parseFloat(allTimeHigh).toFixed(2)} USD
+          <p className="text-sm text-neutral-600 font-medium">
+            ATH: ${parseFloat(allTimeHigh).toFixed(2)}
           </p>
           <div className="flex flex-row items-center gap-1">
             {changeHighLow(priceChange24hr) === "high" ? (
@@ -139,15 +139,19 @@ export default function CoinCard({
               <DownArrowIcon className="text-red-500" />
             )}
             {changeHighLow(priceChange24hr) === "high" ? (
-              <p className="text-base text-green-500">+{priceChange24hr}</p>
+              <p className="text-base text-green-500">
+                +{parseFloat(priceChange24hr).toFixed(2)}
+              </p>
             ) : (
-              <p className="text-base text-red-500">{priceChange24hr}</p>
+              <p className="text-base text-red-500">
+                {parseFloat(priceChange24hr).toFixed(2)}
+              </p>
             )}
           </div>
         </div>
       </div>
       <div className="rounded-lg">
-        <AreaChart height={100} width={160} data={sparkLineChartData}>
+        <AreaChart height={100} width={100} data={sparkLineChartData}>
           <Area
             type="monotone"
             dataKey="y"

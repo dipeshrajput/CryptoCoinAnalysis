@@ -4,11 +4,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
 import useGetCryptoPricing from "@/hooks/apis/useGetCryptoPrices";
+import tw from "@/utils/tw";
 
 export default function CoinCardsContainer() {
   const [domLoaded, setDomLoaded] = useState(false);
   const [coinState, setCoinState] = useState([]);
   const { data: coinsData, status: coinsDataStatus } = useGetCryptoPricing();
+  const [paginationIndex, setPaginationIndex] = useState(0);
 
   useEffect(() => {
     setDomLoaded(true);
@@ -25,12 +27,12 @@ export default function CoinCardsContainer() {
     <div className="">
       {domLoaded && coinState && (
         <Swiper
-          slidesPerView={2}
+          slidesPerView={3}
           spaceBetween={10}
-          className="h-40"
+          className="h-52"
           onSlideChange={(e) => {
-            console.log(e);
-            console.log("slide changed!!!");
+            console.log("slide changed !>", e);
+            setPaginationIndex(e.snapIndex);
           }}
           slidesPerGroup={2}
         >
@@ -48,11 +50,18 @@ export default function CoinCardsContainer() {
           ))}
         </Swiper>
       )}
-      <div className="w-full flex flex-row items-center gap-3 justify-center ">
-        <div className="w-5 h-2.5 bg-neutral-500 rounded-xl"></div>
-        <div className="w-2.5 h-2.5 bg-neutral-200 rounded-full"></div>
-        <div className="w-2.5 h-2.5 bg-neutral-200 rounded-full"></div>
-        <div className="w-2.5 h-2.5 bg-neutral-200 rounded-full"></div>
+      <div className="mt-4 w-full flex flex-row items-center gap-3 justify-center ">
+        {Array(3)
+          .fill(0)
+          .map((val, index) => (
+            <div
+              key={index}
+              className={tw(
+                "w-2.5 h-2.5 bg-neutral-200 rounded-full",
+                paginationIndex === index && "w-4 rounded-md bg-neutral-400"
+              )}
+            />
+          ))}
       </div>
     </div>
   );

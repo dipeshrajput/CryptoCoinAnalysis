@@ -31,7 +31,7 @@ const CoinTableRow = ({
   return (
     <tr
       onClick={() => {
-        setCoinDetailId();
+        setCoinDetailId(id);
         setCoinModalVisible(true);
       }}
       className="rounded-xl hover:bg-neutral-100 active:scale-90 transition ease-in duration-100"

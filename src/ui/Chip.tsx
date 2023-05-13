@@ -9,7 +9,7 @@ const Chip = ({ children, className }: Props) => {
   return (
     <div
       className={tw(
-        "bg-neutral-200/80 rounded-lg py-1 px-2 text-center cursor-pointer active:scale-95",
+        "bg-neutral-100 rounded-lg py-1 px-3.5 text-center cursor-pointer active:scale-95",
         className && className
       )}
     >
