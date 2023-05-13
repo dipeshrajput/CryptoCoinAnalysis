@@ -1,3 +1,4 @@
+/** 
 import { ChartCanvas, Chart } from "react-stockcharts";
 import { XAxis, YAxis } from "react-stockcharts/lib/axes";
 import { discontinuousTimeScaleProvider } from "react-stockcharts/lib/scale";
@@ -32,3 +33,4 @@ const CandleStickChart = ({ type }: Props) => {
 };
 
 export default CandleStickChart;
+**/

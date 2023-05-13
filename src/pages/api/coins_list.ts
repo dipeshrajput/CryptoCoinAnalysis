@@ -19,10 +19,8 @@ export default async function handler(
       }
     );
 
-    console.log("response->", response.data);
     res.json({ coins: response.data });
   } catch (err: any) {
-    console.log("err->", err);
     res.json({ coins: coinsDummyData });
   }
 }
