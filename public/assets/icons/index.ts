@@ -19,4 +19,9 @@ export {
 
 export { RiShareBoxLine as ShareIcon } from "react-icons/ri";
 
-export { AiOutlineStar as StarIcon } from "react-icons/ai";
+export {
+  AiOutlineStar as StarIcon,
+  AiOutlineLoading3Quarters as LoadingIcon,
+  AiOutlineGoogle as GoogleIcon,
+  AiFillGithub as GithubIcon,
+} from "react-icons/ai";

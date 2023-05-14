@@ -1,15 +1,24 @@
 import useGetEMA from "@/hooks/apis/useGetEMA";
 import useGetMACD from "@/hooks/apis/useGetMACD";
+import useGetRSI from "@/hooks/apis/useGetRSI";
+import {
+  TooltipProvider,
+  TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+} from "@radix-ui/react-tooltip";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
 import { VictoryChart, VictoryLine, VictoryTheme } from "victory";
+import { InfoFilledIcon } from "../../../public/assets/icons";
+import useGetMA from "@/hooks/apis/useGetMA";
 const GaugeChart = dynamic(() => import("react-gauge-chart"), { ssr: false });
 
 interface Props {
   symbol: any;
 }
 
-const emaData = [
+const sampleEmaData = [
   {
     value: 27491.151964409724,
     backtrack: 0,
@@ -52,7 +61,7 @@ const emaData = [
   },
 ];
 
-const macdData = [
+const sampleMacdData = [
   {
     valueMACD: -284.96249764811,
     valueMACDSignal: -273.6814420318941,
@@ -116,20 +125,50 @@ const macdData = [
 ];
 
 const CoinSentimentAnalysis = ({ symbol = "btc" }: Props) => {
-  const { data: coinEMA, status: coinEMAStatus } = useGetEMA("BTC");
-  const { data: coinMACD, status: coinMACDStatus } = useGetMACD("BTC");
+  const { data: coinMA, status: coinMAStatus } = useGetMA(symbol.toUpperCase());
+  const { data: coinMACD, status: coinMACDStatus } = useGetMACD(
+    symbol.toUpperCase()
+  );
+
+  const [macdData, setMacdData] = useState([]);
+
+  const { data: coinRSI, status: coinRSIStatus } = useGetRSI(
+    symbol.toUpperCase()
+  );
   const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.5);
 
-  useEffect(() => {
-    if (coinEMAStatus === "success" && coinMACDStatus === "success") {
-      console.log("macd  >>>", coinMACD);
-      console.log("ema >>>", coinEMA);
+  const buySellSignalLogic = () => {
+    if (
+      coinMACD?.data?.[0]?.valueMACD > coinMACD?.data?.[0]?.valueMACDSignal &&
+      coinRSI?.data?.value < 70
+    ) {
+      setBuySellSignalStrength(0.75);
+    } else if (
+      coinMACD?.data?.[0]?.valueMACD < coinMACD?.data?.[0]?.valueMACDSignal &&
+      coinRSI?.data?.value > 80
+    ) {
+      setBuySellSignalStrength(0.25);
+    } else {
+      setBuySellSignalStrength(0.5);
     }
-  }, [coinEMAStatus, coinMACDStatus, coinMACD, coinEMA]);
+  };
+  useEffect(() => {
+    if (
+      coinMAStatus === "success" &&
+      coinMACDStatus === "success" &&
+      coinRSIStatus === "success"
+    ) {
+      console.log("macd  >>>", coinMACD);
+      setMacdData(coinMACD?.data?.reverse());
+      console.log("ema >>>", coinMA);
+      console.log("rsi >>>", coinRSI);
+      buySellSignalLogic();
+    }
+  }, [coinMAStatus, coinMACDStatus, coinRSIStatus, coinMACD, coinMA, coinRSI]);
 
   return (
     <div>
-      <p className="text-lg font-medium">COIN SENTIMENT</p>
+      <p className="text-lg font-medium">COIN ANALYSIS</p>
 
       <div className="grid grid-cols-2 grid-rows-2 gap-2">
         <div className="bg-white shadow-lg rounded-xl shadow-neutral-200 p-4">
@@ -152,7 +191,7 @@ const CoinSentimentAnalysis = ({ symbol = "btc" }: Props) => {
           </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-xl shadow-neutral-200">
+        <div className="bg-white shadow-lg rounded-xl shadow-neutral-200 p-3">
           <div className="h-60 ">
             <VictoryChart padding={50}>
               <VictoryLine
@@ -179,6 +218,57 @@ const CoinSentimentAnalysis = ({ symbol = "btc" }: Props) => {
                 y="valueMACDSignal"
               />
             </VictoryChart>
+          </div>
+          <p className="font-medium">
+            MACD Value Line(blue) vs Signal Line(orange)
+          </p>
+        </div>
+
+        <div className="bg-white shadow-lg rounded-xl shadow-neutral-200 p-4">
+          <div className="flex flex-row items-center text-sm">
+            <p className="font-medium">
+              MACD Signal Value: {coinMACD?.data?.[0]?.valueMACDSignal}
+            </p>
+            <p></p>
+          </div>
+          <div className="flex flex-row items-center text-sm">
+            <p className="font-medium">
+              MACD Value: {coinMACD?.data?.[0]?.valueMACD}
+            </p>
+            <p></p>
+          </div>
+          <div className="flex flex-row items-center text-sm">
+            <p className="font-medium">RSI Value:{coinRSI?.data?.value} </p>
+            <p></p>
+          </div>
+          <div className="flex flex-row items-center text-sm">
+            <p className="font-medium">200 day MA: {coinMA?.data?.value}</p>
+            <p></p>
+          </div>
+          <div className="mt-4">
+            <p className="font-base">SAFE/RISKY INDICATOR:</p>
+            <TooltipProvider>
+              <Tooltip>
+                <div className="flex flex-row gap-1 items-center">
+                  <p>The coin is: SAFE</p>
+                  <TooltipTrigger>
+                    <InfoFilledIcon className="text-neutral-400" />
+                  </TooltipTrigger>
+                </div>
+                <TooltipContent className="max-w-sm p-2 bg-neutral-100 rounded-md">
+                  There are 4 parameters we are checking for coin safety 1. If
+                  more than 80% of coins are released in circulation, there is
+                  limited dilution coming down the pipeline. 2. Coin ranking
+                  under top 100 crypto coins 3.White paper A legitimate crypto
+                  project will usually have some kind of documentation. It may
+                  have a subsection of the website called Docs, or it may have a
+                  single PDF called a white paper 4.Look at the Contracts Now
+                  we’re getting into some serious due diligence. If the coin you
+                  are considering is a token or DeFi project, it will have one
+                  or more smart contracts running on the blockchain.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </div>

@@ -112,7 +112,6 @@ const VictoryCandleStickChart = ({ historyData }: Props) => {
     <VictoryChart height={200} width={400} domainPadding={{ x: 25 }}>
       <VictoryAxis
         fixLabelOverlap
-        scale={{ x: "time" }}
         style={{
           axis: { stroke: "#737373" },
           tickLabels: {
@@ -121,7 +120,7 @@ const VictoryCandleStickChart = ({ historyData }: Props) => {
             padding: 10,
           },
         }}
-        tickFormat={(t) => `${format(t, "yyy")}`}
+        tickFormat={(t) => `${t}`}
       />
       <VictoryAxis
         style={{
