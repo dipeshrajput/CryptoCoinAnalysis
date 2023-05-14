@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Inter, Fira_Code } from "next/font/google";
 import CoinCardsContainer from "@/components/CoinCards/CoinCardsContainer";
 import CryptoCurrencyPricingTable from "@/components/CryptoCurrencyPricingTable";
 import LoginNavButton from "@/components/LoginNavbutton";
