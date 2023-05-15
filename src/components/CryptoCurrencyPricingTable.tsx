@@ -16,7 +16,6 @@ export default function CryptoCurrencyPricingTable() {
 
   const { data: cryptoPricingData, status: cryptoPricingStatus } =
     useGetCryptoPricing();
-  const { coinModalState } = useContext(GlobalContext);
 
   const [coinsData, setCoinsData] = useState([]);
 

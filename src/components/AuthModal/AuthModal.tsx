@@ -5,6 +5,7 @@ import {
   GoogleIcon,
 } from "../../../public/assets/icons";
 import { GlobalContext } from "@/context/globalContext";
+import { signIn } from "next-auth/react";
 
 export default function AuthModal() {
   const { AuthModalOpen } = useContext(GlobalContext);
@@ -12,6 +13,7 @@ export default function AuthModal() {
   const closeModal = () => {
     setAuthModalOpenState(false);
   };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex flex-col items-center">
       <div className="relative max-w-xs top-32 px-4 py-3 rounded-xl bg-white">
@@ -22,7 +24,12 @@ export default function AuthModal() {
           <p className="text-xl font-semibold">Login/Signup</p>
         </div>
         <div className="w-full mt-4 flex flex-col justify-center items-center gap-2">
-          <button className="bg-blue-500 rounded-lg text-white px-3 py-2 flex items-center gap-2 active:scale-95">
+          <button
+            className="bg-blue-500 rounded-lg text-white px-3 py-2 flex items-center gap-2 active:scale-95"
+            onClick={() => {
+              signIn();
+            }}
+          >
             <GoogleIcon className="h-6 w-6" />
             Sign in with Google
           </button>

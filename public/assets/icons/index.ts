@@ -25,3 +25,5 @@ export {
   AiOutlineGoogle as GoogleIcon,
   AiFillGithub as GithubIcon,
 } from "react-icons/ai";
+
+export { FaUser as ProfileIcon } from "react-icons/fa";
