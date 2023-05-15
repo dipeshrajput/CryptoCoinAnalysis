@@ -9,7 +9,7 @@ export default async function handler(
   const page = req.query?.page;
   try {
     const response = await axios(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&locale=en`,
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1&sparkline=true&locale=en`,
       {
         method: "GET",
         headers: {

@@ -1,10 +1,6 @@
-import { GlobalContext } from "@/context/globalContext";
-import useGetCoinDetail from "@/hooks/apis/useGetCoinDetail";
-import { useContext, useEffect, useState } from "react";
 import {
   BackArrowIcon,
   DownArrowIcon,
-  LoadingIcon,
   ShareIcon,
   UpArrowIcon,
 } from "../../../public/assets/icons";
@@ -189,6 +185,7 @@ export default function CoinDetailsPage({
       {/** chart */}
 
       <CoinSentimentAnalysis
+        rank={coinInfo?.market_cap_rank}
         price={coinInfo?.market_data?.current_price?.usd}
         macd={macd}
         rsi={rsi}
@@ -208,6 +205,7 @@ export default function CoinDetailsPage({
           <MarketStatCard
             statHeader="Total Volume"
             statValue={coinInfo?.market_data?.total_volume?.usd}
+            statValue2={`Trading volume is the sum of all trading for a particular coin that happens on centralized (CEX) and decentralized (DEX) crypto exchanges during a certain time frame, measured in dollar value. Volume is also used in stock trading to measure how many stocks were bought and sold. Generally, the higher the trading volume, the higher the price volatility.`}
           />
           <MarketStatCard
             statHeader="CIRCULATING SUPPLY"

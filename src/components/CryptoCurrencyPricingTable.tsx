@@ -29,7 +29,7 @@ export default function CryptoCurrencyPricingTable() {
   }, [cryptoPricingData, cryptoPricingStatus, page]);
 
   const goToNextPage = () => {
-    if (page < 10) {
+    if (page < 20) {
       setPage(page + 1);
     }
   };
@@ -104,7 +104,7 @@ export default function CryptoCurrencyPricingTable() {
               className="h-5 w-5 text-neutral-700 active:scale-90"
             />
             <p className="text-base">
-              Page <span className="font-semibold"> {page} of 10</span>{" "}
+              Page <span className="font-semibold"> {page} of 20</span>{" "}
             </p>
             <ForwardArrowIcon
               onClick={goToNextPage}
