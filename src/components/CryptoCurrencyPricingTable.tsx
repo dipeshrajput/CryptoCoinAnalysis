@@ -3,7 +3,6 @@ import CoinTableRow from "@/components/CoinTableRow";
 import Searchbar from "@/ui/Searchbar";
 import { useContext, useEffect, useState } from "react";
 import { BackArrowIcon, ForwardArrowIcon } from "../../public/assets/icons";
-import CoinDetailsModal from "./CoinDetails/CoinDetailsModal";
 import { GlobalContext } from "@/context/globalContext";
 import { useForm } from "react-hook-form";
 
@@ -18,17 +17,8 @@ export default function CryptoCurrencyPricingTable() {
   const { data: cryptoPricingData, status: cryptoPricingStatus } =
     useGetCryptoPricing();
   const { coinModalState } = useContext(GlobalContext);
-  const [coinModalVisible, setCoinModalVisible] = coinModalState!;
 
   const [coinsData, setCoinsData] = useState([]);
-
-  const closeCoinDetailModal = () => {
-    setCoinModalVisible(false);
-  };
-
-  const openCoinDetailModal = () => {
-    setCoinModalVisible(true);
-  };
 
   useEffect(() => {
     if (cryptoPricingStatus === "success") {
@@ -93,6 +83,7 @@ export default function CryptoCurrencyPricingTable() {
               coinsData.map((coin: any, index) => (
                 <CoinTableRow
                   id={coin?.id}
+                  symbol={coin?.symbol}
                   key={coin?.id}
                   rank={coin?.market_cap_rank}
                   coinName={coin?.name}
@@ -122,9 +113,6 @@ export default function CryptoCurrencyPricingTable() {
             />
           </div>
         </div>
-      )}
-      {coinModalVisible && (
-        <CoinDetailsModal closeModal={closeCoinDetailModal} />
       )}
     </div>
   );

@@ -2,9 +2,11 @@ import NextImage from "next/image";
 import { StarIcon } from "../../public/assets/icons";
 import { useContext } from "react";
 import { GlobalContext } from "@/context/globalContext";
+import { useRouter } from "next/router";
 
 interface CoinTableRowProps {
   id: string;
+  symbol: string;
   rank: string;
   coinName: string;
   coinImageUrl: string;
@@ -16,6 +18,7 @@ interface CoinTableRowProps {
 
 const CoinTableRow = ({
   id,
+  symbol,
   rank,
   coinName,
   coinImageUrl,
@@ -24,15 +27,12 @@ const CoinTableRow = ({
   totalVolume,
   marketCap,
 }: CoinTableRowProps) => {
-  const { coinModalState, coinDetailIdState } = useContext(GlobalContext);
-  const [, setCoinModalVisible] = coinModalState!;
-  const [, setCoinDetailId] = coinDetailIdState!;
+  const router = useRouter();
 
   return (
     <tr
       onClick={() => {
-        setCoinDetailId(id);
-        setCoinModalVisible(true);
+        router.push(`coin/${id}?symbol=${symbol}`);
       }}
       className="rounded-xl hover:bg-neutral-100 active:scale-90 transition ease-in duration-100"
     >
