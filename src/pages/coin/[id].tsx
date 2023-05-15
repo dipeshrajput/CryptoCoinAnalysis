@@ -126,7 +126,7 @@ export default function CoinDetailsPage({
         <p className="text-xl font-medium">COIN DETAILS</p>
       </div>
       {/**header */}
-      <div className="w-full h-0 border border-t border-dashed" />
+      <div className="w-full mt-2 mb-4 h-0 border border-t border-dashed" />
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center gap-3">
@@ -231,6 +231,11 @@ export default function CoinDetailsPage({
                 in news articles, investor discussions, and price analysis
                 reports.
              `}
+          />
+          <MarketStatCard
+            statHeader="ALL TIME LOW"
+            statValue={coinInfo?.market_data?.atl["usd"]}
+            statValue2={`An all-time low (ATL) refers to the lowest price a cryptocurrency has hit during its trading history.`}
           />
           <MarketStatCard
             statHeader="PRICE CHANGE (24H)"
