@@ -29,15 +29,28 @@ const CoinSentimentAnalysis = ({
   rsi,
   ma,
 }: Props) => {
-const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.5);
+const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.0);
 
 const buySellSignalLogic = () => {
   if (
     macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
     rsi?.value < 70 &&
     ma?.value < price
-  ) {
-    setBuySellSignalStrength(0.8);
+  ) {   setTimeout(() => {
+      setBuySellSignalStrength(0.1);
+      setTimeout(() => {
+        setBuySellSignalStrength(0.3);
+        setTimeout(() => {
+          setBuySellSignalStrength(0.6);
+          setTimeout(() => {
+            setBuySellSignalStrength(1);
+          }, 1000);
+            setTimeout(() => {
+            setBuySellSignalStrength(0.8);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
   } else if (
     macd[0]?.valueMACD < macd[0]?.valueMACDSignal &&
     rsi?.value > 30
@@ -47,8 +60,11 @@ const buySellSignalLogic = () => {
       setTimeout(() => {
         setBuySellSignalStrength(0.2);
         setTimeout(() => {
-          setBuySellSignalStrength(0.4);
+          setBuySellSignalStrength(0.3);
           setTimeout(() => {
+            setBuySellSignalStrength(0.4);
+          }, 1000);
+        setTimeout(() => {
             setBuySellSignalStrength(0.3);
           }, 1000);
         }, 1000);
@@ -58,7 +74,21 @@ const buySellSignalLogic = () => {
     macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
     rsi?.value > 70 
   ) {
-    setBuySellSignalStrength(0.3);
+   setTimeout(() => {
+      setBuySellSignalStrength(0.1);
+      setTimeout(() => {
+        setBuySellSignalStrength(0.2);
+        setTimeout(() => {
+          setBuySellSignalStrength(0.3);
+          setTimeout(() => {
+            setBuySellSignalStrength(0.4);
+          }, 1000);
+        setTimeout(() => {
+            setBuySellSignalStrength(0.3);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
   } else {
     setBuySellSignalStrength(0.5);
   }
