@@ -48,9 +48,9 @@ const CoinSentimentAnalysis = ({
       macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
       rsi?.value > 70 
     )  {
-      setBuySellSignalStrength(0.3);
+      setBuySellSignalStrength(0.2);
     } else {
-      setBuySellSignalStrength(0.5);
+      setBuySellSignalStrength(0.3);
     }
   };
 
