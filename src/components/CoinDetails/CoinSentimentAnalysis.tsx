@@ -70,9 +70,9 @@ const CoinSentimentAnalysis = ({
     return reversedMacd;
   };
 
-  useEffect(() => {
+ useEffect(() => {
     buySellSignalLogic();
-  }, []);
+  }, [macd, rsi, ma, price]);
 
   return (
     <div>
