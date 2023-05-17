@@ -29,50 +29,56 @@ const CoinSentimentAnalysis = ({
   rsi,
   ma,
 }: Props) => {
-  const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.0);
+const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.5);
 
-  const buySellSignalLogic = () => {
-    if (
-      macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
-      rsi?.value < 70 &&
-      ma?.value < price
-    ) {
-  
-      setBuySellSignalStrength(0.8);
-    } else if (
-      macd[0]?.valueMACD < macd[0]?.valueMACDSignal &&
-      rsi?.value > 30
-    ) {
-     
-       setBuySellSignalStrength(0.2);
-    }
-      else if (
-      macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
-      rsi?.value > 70 
-    )  {
-       setBuySellSignalStrength(0.3);
-    } else {
-        
-   
-      setBuySellSignalStrength(0.5);
-    }
-  };
+const buySellSignalLogic = () => {
+  if (
+    macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
+    rsi?.value < 70 &&
+    ma?.value < price
+  ) {
+    setBuySellSignalStrength(0.8);
+  } else if (
+    macd[0]?.valueMACD < macd[0]?.valueMACDSignal &&
+    rsi?.value > 30
+  ) {
+    setTimeout(() => {
+      setBuySellSignalStrength(0.1);
+      setTimeout(() => {
+        setBuySellSignalStrength(0.2);
+        setTimeout(() => {
+          setBuySellSignalStrength(0.4);
+          setTimeout(() => {
+            setBuySellSignalStrength(0.3);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    }, 1000);
+  } else if (
+    macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
+    rsi?.value > 70 
+  ) {
+    setBuySellSignalStrength(0.3);
+  } else {
+    setBuySellSignalStrength(0.5);
+  }
+};
 
-  const macdChart = () => {
-    console.log("macd ->", macd);
-    const reversedMacd = [...macd].reverse();
-    let idx = 0;
-    for (let obj of reversedMacd) {
-      obj.backtrack = idx;
-      idx = idx + 1;
-    }
-    console.log("reverse mac->", reversedMacd);
-    return reversedMacd;
-  };
+const macdChart = () => {
+  console.log("macd ->", macd);
+  const reversedMacd = [...macd].reverse();
+  let idx = 0;
+  for (let obj of reversedMacd) {
+    obj.backtrack = idx;
+    idx = idx + 1;
+  }
+  console.log("reverse mac->", reversedMacd);
+  return reversedMacd;
+};
 
- useEffect(() => {
-    buySellSignalLogic();
-  }, [macd, rsi, ma, price]);
+useEffect(() => {
+  buySellSignalLogic();
+}, [macd, rsi, ma, price]);
 
   return (
     <div>
