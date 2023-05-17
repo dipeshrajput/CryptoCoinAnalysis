@@ -29,7 +29,7 @@ const CoinSentimentAnalysis = ({
   rsi,
   ma,
 }: Props) => {
-  const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.5);
+  const [buySellSignalStrength, setBuySellSignalStrength] = useState(0.0);
 
   const buySellSignalLogic = () => {
     if (
