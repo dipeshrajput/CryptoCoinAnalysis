@@ -37,38 +37,23 @@ const CoinSentimentAnalysis = ({
       rsi?.value < 70 &&
       ma?.value < price
     ) {
-      setBuySellSignalStrength(0.2);
-      setBuySellSignalStrength(0.3);
-      setBuySellSignalStrength(0.4);
-      setBuySellSignalStrength(0.5);
-      setBuySellSignalStrength(0.6);
-      setBuySellSignalStrength(0.8);
-      setBuySellSignalStrength(0.6);
+  
       setBuySellSignalStrength(0.8);
     } else if (
       macd[0]?.valueMACD < macd[0]?.valueMACDSignal &&
       rsi?.value > 30
     ) {
-         setBuySellSignalStrength(0.1);
-      setBuySellSignalStrength(0.2);
-      setBuySellSignalStrength(0.4);
+     
        setBuySellSignalStrength(0.2);
     }
       else if (
       macd[0]?.valueMACD > macd[0]?.valueMACDSignal &&
       rsi?.value > 70 
     )  {
-      setBuySellSignalStrength(0.1);
-      setBuySellSignalStrength(0.2);
-      setBuySellSignalStrength(0.4);
        setBuySellSignalStrength(0.3);
     } else {
         
-      setBuySellSignalStrength(0.1);
-      setBuySellSignalStrength(0.2);
-      setBuySellSignalStrength(0.3);
-      setBuySellSignalStrength(0.4);
-      setBuySellSignalStrength(0.6);
+   
       setBuySellSignalStrength(0.5);
     }
   };
