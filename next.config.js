@@ -8,6 +8,7 @@ const nextConfig = {
     remotePatterns: [
       { hostname: "cdn.coinranking.com" },
       { hostname: "assets.coingecko.com" },
+      { hostname: "coin-images.coingecko.com"}
     ],
   },
 };

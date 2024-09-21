@@ -111,7 +111,7 @@ useEffect(() => {
 }, [macd, rsi, ma, price]);
 
   return (
-    <div>
+    <div className="py-4">
       <p className="text-lg font-medium">COIN ANALYSIS</p>
 
       <div className="grid grid-cols-2 grid-rows-2 gap-2">

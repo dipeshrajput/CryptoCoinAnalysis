@@ -13,6 +13,8 @@ import Chip from "@/ui/Chip";
 import { GetServerSidePropsContext } from "next";
 import axios from "axios";
 import { useRouter } from "next/router";
+import CoinAiPred from "@/components/CoinAiPred/CoinAiPred";
+import { AiDataType } from "@/components/CoinAiPred/CoinAiChart";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -30,48 +32,64 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       }
     );
 
-    const coinMacdResponse = await axios(
-      `https://api.taapi.io/macd?secret=${process.env.NEXT_PUBLIC_TAAPI_API_KEY}&exchange=binance&symbol=${apiSymbol}/USDT&interval=15m&backtracks=10`,
-      {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    let coinMacdResponse:{data?: any}={};
+    let coinRSIResponse:{data?: any}={};
+    let coinMAResponse:{data?: any}={};
 
-    const coinRSIResponse = await axios(
-      `https://api.taapi.io/rsi?secret=${process.env.NEXT_PUBLIC_TAAPI_API_KEY}&exchange=binance&symbol=${apiSymbol}/USDT&interval=15m&period=9`,
-      {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    try {
+      coinMacdResponse = await axios(
+        `https://api.taapi.io/macd?secret=${process.env.NEXT_PUBLIC_TAAPI_API_KEY}&exchange=binance&symbol=${apiSymbol}/USDT&interval=15m&backtracks=10`,
+        {
+          method: "GET",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const coinMAResponse = await axios(
-      `https://api.taapi.io/ma?secret=${process.env.NEXT_PUBLIC_TAAPI_API_KEY}&exchange=binance&symbol=${apiSymbol}/USDT&interval=15m&period=200`,
-      {
-        method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-      }
-    );
+      coinRSIResponse = await axios(
+        `https://api.taapi.io/rsi?secret=${process.env.NEXT_PUBLIC_TAAPI_API_KEY}&exchange=binance&symbol=${apiSymbol}/USDT&interval=15m&period=9`,
+        {
+          method: "GET",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      coinMAResponse = await axios(
+        `https://api.taapi.io/ma?secret=${process.env.NEXT_PUBLIC_TAAPI_API_KEY}&exchange=binance&symbol=${apiSymbol}/USDT&interval=15m&period=200`,
+        {
+          method: "GET",
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch(e) {
+      
+    }
+
+
+    let aiData = {data:null}
+    try {
+      aiData = await axios(`https://coin-meter-model-api.onrender.com/predict?symbol=${apiSymbol.toUpperCase()}-USD`);
+    } catch(e) {}
 
     return {
       props: {
         coinInfo: coinDetailsResponse?.data,
-        macd: coinMacdResponse?.data,
-        rsi: coinRSIResponse?.data,
-        ma: coinMAResponse?.data,
+        aiData: aiData?.data || null,
+        macd: coinMacdResponse?.data || null,
+        rsi: coinRSIResponse?.data || null,
+        ma: coinMAResponse?.data || null,
       },
     };
   } catch (err: any) {
+    console.log(err)
     return {
       props: {
         error: {
@@ -86,10 +104,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 interface CoinDetailsPageProps {
   coinInfo: any;
-  macd: any;
-  rsi: any;
-  ma: any;
+  macd?: any;
+  rsi?: any;
+  ma?: any;
   error?: any;
+  aiData?: AiDataType;
 }
 
 export default function CoinDetailsPage({
@@ -98,6 +117,7 @@ export default function CoinDetailsPage({
   macd,
   rsi,
   ma,
+  aiData
 }: CoinDetailsPageProps) {
   const router = useRouter();
   if (error) {
@@ -113,6 +133,8 @@ export default function CoinDetailsPage({
       {/**header */}
       <div className="flex flex-row gap-2 items-center">
         <button
+          type='button'
+          title="back"
           onClick={() => {
             router.back();
           }}
@@ -184,17 +206,23 @@ export default function CoinDetailsPage({
 
       {/** chart */}
 
-      <CoinSentimentAnalysis
-        rank={coinInfo?.market_cap_rank}
-        price={coinInfo?.market_data?.current_price?.usd}
-        macd={macd}
-        rsi={rsi}
-        ma={ma}
-        symbol={coinInfo?.symbol}
-      />
+      {
+        ma && macd && rsi && <CoinSentimentAnalysis
+          rank={coinInfo?.market_cap_rank}
+          price={coinInfo?.market_data?.current_price?.usd}
+          macd={macd}
+          rsi={rsi}
+          ma={ma}
+          symbol={coinInfo?.symbol}
+        /> 
+      }
+
+      {
+        aiData && <CoinAiPred aiData={aiData} />
+      }
 
       {/** market stats */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 py-4">
         <p className="text-lg font-medium">MARKET STATS</p>
         <div className="grid grid-cols-2 gap-6">
           <MarketStatCard
